@@ -59,7 +59,7 @@ with tf.Session() as sess:
 
     hidden2Values = hidden2.eval({dataHolder: positionData})
     hiddenGrid = makeGrid(hidden2Values)
-    probMap = tf.nn.softmax(np.dot(hiddenGrid, optimizedWeights['outputLogits/kernel:0']) + optimizedWeights['outputLogits/bias:0']).eval()
+    probMap = tf.nn.softmax(outputLogits).eval({hidden2: hiddenGrid})
     f, ax = plt.subplots()
     ax.scatter(hiddenGrid[:, 0], hiddenGrid[:, 1], c=bgColor(np.argmax(probMap, 1)))
     ax.scatter(hidden2Values[:, 0], hidden2Values[:, 1], s=40, cmap=plt.cm.Spectral, edgecolor='black', marker='s', linewidth=1, c=markerColor(np.argmax(labelData, 1)))
