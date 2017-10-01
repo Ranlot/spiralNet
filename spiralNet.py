@@ -38,7 +38,7 @@ spiralData = list(map(makeSpiral, range(numbClasses)))
 
 with tf.Session() as sess:
     sess.run(init)
-    positionData, labelData = extractElem(0, spiralData), tf.one_hot(extractElem(1, spiralData), depth=numbClasses).eval(session=sess)
+    positionData, labelData = extractElem(0, spiralData), tf.one_hot(extractElem(1, spiralData), depth=numbClasses).eval()
 
     crossEntropyLossValues = []
 
@@ -55,7 +55,7 @@ with tf.Session() as sess:
     gridResults = np.argmax(sess.run(outputLogits, {dataHolder: testingGrid}), 1)
     plotData(testingGrid, gridResults, positionData, labelData, plotDir)
 
-    optimizedWeights = {x.name: tf.get_default_graph().get_tensor_by_name(x.name).eval(session=sess) for x in tf.trainable_variables()}
+    # optimizedWeights = {x.name: tf.get_default_graph().get_tensor_by_name(x.name).eval() for x in tf.trainable_variables()}
 
     hidden2Values = hidden2.eval({dataHolder: positionData})
     hiddenGrid = makeGrid(hidden2Values)
