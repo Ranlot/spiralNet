@@ -51,14 +51,14 @@ with tf.Session() as sess:
     print('Optimization Finished!')
     lossPlotter(numEpochs, crossEntropyLossValues, plotDir)
     
-    testingGrid = makeGrid(positionData[:, 0].min(), positionData[:, 0].max(), positionData[:, 1].min(), positionData[:, 1].max())
+    testingGrid = makeGrid(positionData)
     gridResults = np.argmax(sess.run(outputLogits, {dataHolder: testingGrid}), 1)
     plotData(testingGrid, gridResults, positionData, labelData, plotDir)
 
     optimizedWeights = {x.name: tf.get_default_graph().get_tensor_by_name(x.name).eval(session=sess) for x in tf.trainable_variables()}
 
     hidden2Values = hidden2.eval({dataHolder: positionData})
-    hiddenGrid = makeGrid(hidden2Values[:, 0].min(), hidden2Values[:, 0].max(), hidden2Values[:, 1].min(), hidden2Values[:, 1].max())
+    hiddenGrid = makeGrid(hidden2Values)
     probMap = tf.nn.softmax(np.dot(hiddenGrid, optimizedWeights['outputLogits/kernel:0']) + optimizedWeights['outputLogits/bias:0']).eval()
     f, ax = plt.subplots()
     ax.scatter(hiddenGrid[:, 0], hiddenGrid[:, 1], c=bgColor(np.argmax(probMap, 1)))

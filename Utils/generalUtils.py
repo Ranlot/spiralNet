@@ -4,8 +4,10 @@ import numpy as np
 def extractElem(elemToExtract, data):
     return np.concatenate(list(map(itemgetter(elemToExtract), data)))
 
-def makeGrid(xmin, xmax, ymin, ymax):
-    gridData = np.linspace(xmin, xmax, 500)
-    gridX, gridY = np.meshgrid(gridData, gridData)
-    return np.dstack((gridX.flatten(), gridY.flatten()))[0]
-
+def makeGrid(dataSet):
+    def extremePadder(_):
+        padRatio = 0.06
+        minVal, maxVal = _.min(), _.max()
+        return minVal - padRatio * np.abs(minVal), maxVal + padRatio * np.abs(maxVal)
+    gridMaker = lambda axis: np.linspace(num=500, *extremePadder(dataSet[:, axis]))
+    return np.dstack(map(lambda _: _.flatten(), np.meshgrid(*map(gridMaker, [0, 1]))))[0]
