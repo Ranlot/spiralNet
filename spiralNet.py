@@ -14,7 +14,7 @@ numbClasses = 5
 plotDir = 'plotDir'
 learningRate = 0.0005
 L2reg = 0.005
-numEpochs = 8000
+numEpochs = 10000
 
 dataHolder = tf.placeholder(tf.float32, [None, 2]) # data is in R2
 labelsHolder = tf.placeholder(tf.float32, [None, numbClasses])
@@ -36,7 +36,21 @@ init = tf.global_variables_initializer()
 
 spiralData = list(map(makeSpiral, range(numbClasses)))
 
+hiddenCheckPoints = set(map(int, np.logspace(np.log10(1), np.log10(numEpochs-1), 350)))
+
 with tf.Session() as sess:
+
+    def hiddenLayerPlotter(epoch='Final', gridFill=False, saveDir='framesDir'):
+        f, ax = plt.subplots()
+        hidden2Values = hidden2.eval({dataHolder: positionData})
+        if gridFill:
+            hiddenGrid = makeGrid(hidden2Values)
+            probMap = tf.nn.softmax(outputLogits).eval({hidden2: hiddenGrid})
+            ax.scatter(hiddenGrid[:, 0], hiddenGrid[:, 1], c=bgColor(np.argmax(probMap, 1)))
+        ax.scatter(hidden2Values[:, 0], hidden2Values[:, 1], s=40, cmap=plt.cm.Spectral, edgecolor='black', marker='s', linewidth=1, c=markerColor(np.argmax(labelData, 1)))
+        ax.set_title('Decision boundaries @ last hidden layer ; %s' % epoch)
+        plt.savefig('%s/decisionBoundaries.%s.png' % (saveDir, epoch)); plt.close()
+     
     sess.run(init)
     positionData, labelData = extractElem(0, spiralData), tf.one_hot(extractElem(1, spiralData), depth=numbClasses).eval()
 
@@ -46,6 +60,7 @@ with tf.Session() as sess:
         _, _lossValue, _crossEntropyLoss, _L2RegLoss = sess.run([optimizer, lossValue, crossEntropyLoss, L2RegLoss], {dataHolder: positionData, labelsHolder: labelData})
         crossEntropyLossValues.append(_crossEntropyLoss)
         _accuracy = accuracy.eval({dataHolder: positionData, labelsHolder: labelData})
+        if epoch in hiddenCheckPoints:	hiddenLayerPlotter(epoch)
         print('%d\t\tcrossEntropy = %f\tL2 = %f\ttotal = %f\taccuracy = %f' % (epoch, _crossEntropyLoss, _L2RegLoss, _lossValue, _accuracy))
 
     print('Optimization Finished!')
@@ -57,12 +72,4 @@ with tf.Session() as sess:
 
     # optimizedWeights = {x.name: tf.get_default_graph().get_tensor_by_name(x.name).eval() for x in tf.trainable_variables()}
 
-    hidden2Values = hidden2.eval({dataHolder: positionData})
-    hiddenGrid = makeGrid(hidden2Values)
-    probMap = tf.nn.softmax(outputLogits).eval({hidden2: hiddenGrid})
-    f, ax = plt.subplots()
-    ax.scatter(hiddenGrid[:, 0], hiddenGrid[:, 1], c=bgColor(np.argmax(probMap, 1)))
-    ax.scatter(hidden2Values[:, 0], hidden2Values[:, 1], s=40, cmap=plt.cm.Spectral, edgecolor='black', marker='s', linewidth=1, c=markerColor(np.argmax(labelData, 1)))
-    ax.set_title('Decision boundaries @ last hidden layer')
-    plt.savefig('%s/decisionBoundaries.png' % plotDir); plt.close()
-
+    hiddenLayerPlotter(gridFill=True, saveDir=plotDir) 
