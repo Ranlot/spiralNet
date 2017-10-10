@@ -1,9 +1,8 @@
 import numpy as np
 
 numbInClass = 200
-numbClasses = 5 
 
-def makeSpiral(spId):
+def makeSpiral(spId, numbClasses):
     radius = np.linspace(2, 20, numbInClass)
     origTheta = 2 * np.pi / float(numbClasses)
     theta = np.linspace(spId * origTheta, (spId+4) * origTheta, numbInClass)

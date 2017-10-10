@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from .generalUtils import *
 import numpy as np
 
-markerColor_dict = {0 : 'gold', 1 : 'blue', 2 : 'darkred', 3 : 'green', 4 : 'purple'}
-bgColor_dict = {0 : 'yellow', 1 : 'cyan', 2 : 'tomato', 3 : 'lime', 4 : 'fuchsia'}
+markerColor_dict = {0 : 'gold', 1 : 'blue', 2 : 'darkred', 3 : 'green', 4 : 'purple', 5: 'darkorange', 6: 'gray'}
+bgColor_dict = {0 : 'yellow', 1 : 'cyan', 2 : 'tomato', 3 : 'lime', 4 : 'fuchsia', 5: 'orange', 6:'lightgray'}
 
 def plotSpiral(spiralData):
     X = extractElem(0, spiralData)
