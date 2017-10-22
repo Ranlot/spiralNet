@@ -2,13 +2,11 @@
 
 With deep learning emerging a game-changer in virtually all areas of science, a question that keeps on appearing is: **"How & what do neural networks learn?"**
 
-Despite a flurry of activity, the inner workings of these models work remain quite murky.  One interesting research direction is the so-called “manifold hypothesis” as mentioned by Chris Olah in an awesome [blog post](http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/).  According to this idea, *"the task of a classification algorithm is fundamentally to separate a bunch of tangled manifolds"* which does indeed sound very natural.
+Despite a flurry of activity, the inner workings of these models work remain quite murky.  One interesting research direction is the so-called “manifold hypothesis” as mentioned by Chris Olah in an awesome [blog post](http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/).  According to this idea, *"the task of a classification algorithm is fundamentally to separate a bunch of tangled manifolds"*.  Indeed, this geometrical approach sounds like a very natural interpretation.
 
-Let's explore this further by focusing on a very simple [synthetic dataset](http://cs231n.github.io/neural-networks-case-study/) of 2D interleaving spirals that belong to different classes.  The classification task can be achieved by a basic artificial neural network (MLP with 2 hidden layers).
+Let's explore a little further by focusing on a very simple synthetic dataset of 2D interleaving spirals that belong to different classes.  The classification task can be achieved by a basic artificial neural network (MLP with 2 hidden layers).
 
-The only "trick" is that the last hidden layer of the network has only 2 neurons.  Since the input is also in 2d, this means that we can visualize how the data flows from the input space to the last hidden in very straightforward way; it is a simple vector function from R2 to R2.  Because of the activation function, the hidden space takes bounded values in the square [-1, 1].
-
-Let's first look at the process for 4 classes and you'll be able to see below how it is modified when changing the number of classes.
+The **trick** is that we architecture our network such that the last hidden layer has **only 2 neurons**.  Since the input is also in 2D, this means that we can visualize how the data flows from the input space to the last hidden in very straightforward way; it is a simple vector function **from R2 to R2**.
 
 ### A) Input space
 
@@ -18,25 +16,33 @@ The color of the points shows the class they belong to and the background color 
 <img src="plotDir/4/inputData.png" width="420"/>
 </p>
 
-### B) Vector valued function from input to last hidden layer
+### B) Training and final decision boundaries
 
-<p align="center">
-<img src="plotDir/4/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/4/vectorPlot.Guided.DataTransformer.png" width="420"/>
-</p>
+(left) Evolution of where the input data is transformed to in the last hidden layer
 
-### C) Training and final decision boundaries
-
-What is really interesting is that classes try to divide this space by grouping each other 
+(right) Final position of the data in the last hidden layer.  As expected the points are now linearly separable which explains why the final softmax logistic regression gives very good accuracy.  Another interesting observation is that the points are **flowing to the most distant positions from each other as possible**. 
 
 <p align="center">
 <img src="hidden.anim.4.gif" width="420"/>
 <img src="plotDir/4/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-### D) Optimal packing at the edges of a square?
+#### What this looks like from input space
 
-Explain how to look at the packing problem in the square.
+Plot of the vector valued function from input to last hidden layer.
+
+(left) Without visual guide showing neural net predictions.
+
+(right) Look how arrows point in a very specific direction within each class.  With 4 classes, arrows point to the corners of the unit square.
+
+<p align="center">
+<img src="plotDir/4/vectorPlot.Raw.DataTransformer.png" width="420"/>
+<img src="plotDir/4/vectorPlot.Guided.DataTransformer.png" width="420"/>
+</p>
+
+### C) Optimal packing at the edges of a square?
+
+As mentioned above points in the hidden layer are transformed such that they settle into the most distant positions from each other as possible.  This idea can be immediately checked by conducting the same analysis for a varying number of classes.
 
 <p align="center">
 <img src="plotDir/2/decisionBoundaries.Final.png" width="420"/>
@@ -46,6 +52,17 @@ Explain how to look at the packing problem in the square.
 <img src="plotDir/6/decisionBoundaries.Final.png" width="420"/>
 <img src="plotDir/7/decisionBoundaries.Final.png" width="420"/>
 </p>
+
+#### **Take home message**
+
+The *separation of tangled manifolds* as mentioned in the introduction is carried out by finding a function bends the input data into clusters that optimally pack on the edge of the unit square in the hidden layer.  Hidden layer data first seeks to go into the corners and then starts to pile up on the edges while trying to keep a maximum separation from the other clusters.
+
+#### **Food for thoughts...**
+
+- Could it be beneficial to desing new activation functions that map into the unit sphere instead of a square?
+- Assuming that depth gives an exponential growth of model expressivity, we could stack many 2-neuron layers together in order to see if how this optimal packing happens in other layers.  Alternatively, one can use dimensionality reduction techniques to do the same...
+- The number of corners grows exponentially with the dimensionality of the embedding space.  Given a number of classes to separate, can this optimal packing be used in order to help the design of neural networks? 
+
 
 ### All the plots
 
