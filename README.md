@@ -1,42 +1,42 @@
-# Taking a peek into the hidden layers
+## Taking a peek into the hidden layers
 
-With deep learning emerging a game-changer in virtually all areas of science, a question that keeps on appearing is “How / what do neural networks learn?”.  Indeed, more and more people are now looking at new methods to visualize how individual neurons contribute to the overall prediction of neural nets, what is happening to the information content carried by the weights during training, what is the capacity and generalization capability and many more interesting questions regarding the “theory of deep learning”.  Some say the tools previously developed in the context of statistical physics may even come to the rescue…  Keeping track of this fast changing world is very challenging and it is easy to get lost while walking the fine line between hype, hardware / engineering advances, fancy new architectures and actual scientific insight…
+With deep learning emerging a game-changer in virtually all areas of science, a question that keeps on appearing is: **"How & what do neural networks learn?"**
 
-One aspect that caught my attention is the so-called “manifold hypothesis” as mentioned in the (not so new but still awesome)    [blog post](http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/) by Chris Olah.
+Despite a flurry of activity, the inner workings of these models work remain quite murky.  One interesting research direction is the so-called “manifold hypothesis” as mentioned by Chris Olah in an awesome [blog post](http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/).  According to this idea, *"the task of a classification algorithm is fundamentally to separate a bunch of tangled manifolds"* which does indeed sound very natural.
 
-According to this idea, “the task of a classification algorithm is fundamentally to separate a bunch of tangled manifolds”.
+Let's explore this further by focusing on a very simple [synthetic dataset](http://cs231n.github.io/neural-networks-case-study/) of 2D interleaving spirals that belong to different classes.  The classification task can be achieved by a basic artificial neural network (MLP with 2 hidden layers).
 
-Looking for a simple synthetic dataset for myself in order to examine this idea in more concrete terms, I decided to follow and generalize the [spiral classification task](http://cs231n.github.io/neural-networks-case-study/) as introduced in one the CS231 lectures.  Similarly, for the sake of simplicity, I’m using a basic neural network consisting of 2 fully connected layers (the basic ANN).  The only “trick” is that the last hidden layer of my network has only 2 neurons.  Since the input is also in 2d, this means that I’ll be able to visualize how the data in the input space is being transformed at the in the hidden layer state in very straightforward way.
+The only "trick" is that the last hidden layer of the network has only 2 neurons.  Since the input is also in 2d, this means that we can visualize how the data flows from the input space to the last hidden in very straightforward way; it is a simple vector function from R2 to R2.  Because of the activation function, the hidden space takes bounded values in the square [-1, 1].
 
-As an example I'm first showing what is happening in the case of 4 classes but the really interesting stuff comes from comparing plots for different number of classes.
+Let's first look at the process for 4 classes and you'll be able to see below how it is modified when changing the number of classes.
 
-## The input space:
+### A) Input space
 
-The color of the points shows the class they belong to and the background color shows the class predicted by the neural net. 
+The color of the points shows the class they belong to and the background color shows the class predicted by the trained neural net. 
 
 <p align="center">
 <img src="plotDir/4/inputData.png" width="420"/>
 </p>
 
-## Vector valued function from input to last hidden layer:
+### B) Vector valued function from input to last hidden layer
 
 <p align="center">
 <img src="plotDir/4/vectorPlot.Raw.DataTransformer.png" width="420"/>
 <img src="plotDir/4/vectorPlot.Guided.DataTransformer.png" width="420"/>
 </p>
 
-## Training and final decision boundaries
+### C) Training and final decision boundaries
 
-Since the very last activation function of the network is a “hyperbolic tangent”, all points from the input space are mapped into the square [-1, 1].  What is really interesting is that classes try to divide this space by grouping each other 
+What is really interesting is that classes try to divide this space by grouping each other 
 
 <p align="center">
 <img src="hidden.anim.4.gif" width="420"/>
 <img src="plotDir/4/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-## Packing in the square
+### D) Optimal packing at the edges of a square?
 
-What I think (maybe I'm wrong) is the most interesting result of this little study.
+Explain how to look at the packing problem in the square.
 
 <p align="center">
 <img src="plotDir/2/decisionBoundaries.Final.png" width="420"/>
@@ -47,18 +47,9 @@ What I think (maybe I'm wrong) is the most interesting result of this little stu
 <img src="plotDir/7/decisionBoundaries.Final.png" width="420"/>
 </p>
 
+### All the plots
 
-## Some interesting ideas to follow up:
-1) as it’s becoming more clear why depth is actually important.  (HUJI) one may be tempted to replace the 1st hidden layer by more hidden layers with a smaller (ideally 2) number of neurons.
-2) understand better the role of the length of the arrows in the vector plot.
-
-In the spirit of keeping this a collaborative effort, I’d love to hear your ideas as well…
-
-## And now, showing for different number of classes
-
-Explain how to look at the packing problem in the square.
-
-### 2 classes
+##### 2 classes
 
 <p align="center">
 <img src="plotDir/2/inputData.png" width="420"/>
@@ -74,7 +65,7 @@ Explain how to look at the packing problem in the square.
 <img src="plotDir/2/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-### 3 classes
+##### 3 classes
 
 <p align="center">
 <img src="plotDir/3/inputData.png" width="420"/>
@@ -90,7 +81,7 @@ Explain how to look at the packing problem in the square.
 <img src="plotDir/3/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-### 4 classes
+##### 4 classes
 
 <p align="center">
 <img src="plotDir/4/inputData.png" width="420"/>
@@ -106,7 +97,7 @@ Explain how to look at the packing problem in the square.
 <img src="plotDir/4/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-### 5 classes
+##### 5 classes
 
 <p align="center">
 <img src="plotDir/5/inputData.png" width="420"/>
@@ -122,7 +113,7 @@ Explain how to look at the packing problem in the square.
 <img src="plotDir/5/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-### 6 classes
+##### 6 classes
 
 <p align="center">
 <img src="plotDir/6/inputData.png" width="420"/>
@@ -138,7 +129,7 @@ Explain how to look at the packing problem in the square.
 <img src="plotDir/6/decisionBoundaries.Final.png" width="420"/>
 </p>
 
-### 7 classes
+##### 7 classes
 
 <p align="center">
 <img src="plotDir/7/inputData.png" width="420"/>
