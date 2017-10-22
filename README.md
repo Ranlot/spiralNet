@@ -59,10 +59,9 @@ The *separation of tangled manifolds* as mentioned in the introduction is carrie
 
 #### **Food for thoughts...**
 
-- Could it be beneficial to desing new activation functions that map into the unit sphere instead of a square?
-- Assuming that depth gives an exponential growth of model expressivity, we could stack many 2-neuron layers together in order to see if how this optimal packing happens in other layers.  Alternatively, one can use dimensionality reduction techniques to do the same...
-- The number of corners grows exponentially with the dimensionality of the embedding space.  Given a number of classes to separate, can this optimal packing be used in order to help the design of neural networks? 
-
+- The number of corners grows exponentially with the dimensionality of the embedding space.  Can this tell us something about how to architecture neural netorks?
+- Depth gives an exponential growth of model expressivity, we could stack many 2-neuron layers together in order to see if how this optimal packing happens in other layers.  Alternatively, one can use dimensionality reduction techniques to do the same.
+- Could it be beneficial to design new activation functions that map into the unit sphere instead of a square?  This way would ensure complete symmetry no matter what the number of classes is...
 
 ### All the plots
 
