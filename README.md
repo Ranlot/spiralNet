@@ -29,7 +29,7 @@ The color of the points shows the class they belong to and the background color 
 
 #### What this looks like from input space
 
-Plot of the vector valued function from input to last hidden layer.
+Now that we see where the points are taken to in the hidden layer, it may interesting to see this from the point of view of the input space. Since both input and the hidden data are in R2, it is possible to simply plot of the vector valued function that transforms the data from the input to its hidden representation.
 
 (left) Without visual guide showing neural net predictions.
 
@@ -40,7 +40,7 @@ Plot of the vector valued function from input to last hidden layer.
 <img src="plotDir/4/vectorPlot.Guided.DataTransformer.png" width="420"/>
 </p>
 
-### C) Optimal packing at the edges of a square?
+### C) Optimal packing on the edges of the unit square
 
 As mentioned above points in the hidden layer are transformed such that they settle into the most distant positions from each other as possible.  This idea can be immediately checked by conducting the same analysis for a varying number of classes.
 
