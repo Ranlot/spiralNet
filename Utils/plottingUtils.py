@@ -1,31 +1,30 @@
 import tensorflow as tf
+import scipy.stats as st
 import matplotlib.pyplot as plt
 from .generalUtils import *
 import numpy as np
 import os
+import pandas as pd
 
 markerColor_dict = {0 : 'gold', 1 : 'blue', 2 : 'darkred', 3 : 'green', 4 : 'purple', 5: 'darkorange', 6: 'gray'}
 bgColor_dict = {0 : 'yellow', 1 : 'cyan', 2 : 'tomato', 3 : 'lime', 4 : 'fuchsia', 5: 'orange', 6:'lightgray'}
 
 def plotSpiral(spiralData):
-    X = extractElem(0, spiralData)
-    y = extractElem(1, spiralData)
     plt.figure()
-    plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap=plt.cm.Spectral)
-    plt.axis('equal')
-    plt.savefig
+    plt.scatter(*(extractElem(0, spiralData)).T, c=extractElem(1, spiralData), s=40)
+    plt.axis('equal'); plt.savefig
 
 def colorGetter(colorDict):
     return lambda colorKeys: [colorDict.get(colorKey, 'black') for colorKey in colorKeys]
 
 markerColor, bgColor = [colorGetter(colorDict) for colorDict in [markerColor_dict, bgColor_dict]]
 
-def lossPlotter(numEpochs, lossValues, plotDir):
+def lossPlotter(numEpochs, lossValues, numbClasses):
     f, ax = plt.subplots()
     ax.plot(range(1, 1+numEpochs), lossValues, '-', lw=3, c='k')
-    ax.set_title(r'Cross entropy loss vs. epochs (log 5 $\approx$ %.2f)' % (np.log(5)))
+    ax.set_title(r'Cross entropy loss vs. epochs (log %d $\approx$ %.2f)' % (numbClasses, np.log(numbClasses)))
     ax.grid()
-    plt.savefig('%s/loss.png' % plotDir)
+    plt.savefig(os.path.join('plotDir', str(numbClasses), "loss.png"))
 
 def wrap_inputSpacePlotter(sess, positionData, dataHolder, labelData, outputLogits, numbClasses):
     saveDir = os.path.join('plotDir', str(numbClasses))
@@ -81,3 +80,27 @@ def wrap_vectorPlotter(sess, positionData, dataHolder, lastHiddenLayer, outputLo
         plt.savefig('%s/vectorPlot.Raw.DataTransformer.png' % saveDir)
     return simplePlotter
 
+def anglePlotter(angleDB, numbClasses):
+    groupedAngleDB = angleDB.groupby('class')
+    classesByIncreasingAngles = groupedAngleDB.apply(lambda group: (np.degrees(st.circmean(group['angle'])))).sort_values().index
+    # assert len(set(angleDB['class'])) == numbClasses
+    numbCols = 3 if numbClasses > 2 else 2
+    numbRows = (numbClasses - 1) // numbCols + 1
+    fig = plt.figure()
+    for classID, classColor in enumerate(classesByIncreasingAngles):
+        group = groupedAngleDB.get_group(classColor)
+        meanAngle, angleSTD = np.degrees(st.circmean(group['angle'])), np.degrees(st.circstd(group['angle']))
+        ax = fig.add_subplot(numbRows, numbCols, classID+1)
+        ax.hist(np.degrees(group['angle']), 8, normed=True, histtype='bar', rwidth=0.8, color=classColor, edgecolor='k')
+        ax.axvline(meanAngle, ls='--', c='k'); ax.set_yticks([])
+        ax.set_title(r'$%.1f \pm %.1f$' % (meanAngle, angleSTD))
+    fig.tight_layout(); plt.savefig(os.path.join('plotDir/', str(numbClasses), 'angles.png'))
+
+def wrap_hiddenStatsBuilder(sess, positionData, dataHolder, outputLogits, lastHiddenLayer):
+    def simpleBuilder():
+        highResTestingGrid = makeGrid(positionData, 1000)
+        gridResults = bgColor(np.argmax(sess.run(outputLogits, {dataHolder: highResTestingGrid}), 1))
+        lastHiddenLayer_values = sess.run(lastHiddenLayer, {dataHolder: highResTestingGrid})
+        angleDB = (np.arctan2(lastHiddenLayer_values[:, 1], lastHiddenLayer_values[:, 0]) + 2 * np.pi) % (2 * np.pi)
+        return pd.DataFrame({'angle': angleDB, 'class': gridResults})
+    return simpleBuilder
