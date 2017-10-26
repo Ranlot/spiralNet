@@ -152,8 +152,8 @@ The *separation of tangled manifolds* as mentioned in the introduction is carrie
 </p>
 
 <p align="center">
-<img src="plotDir/7/vectorPlot.Raw.DataTransformer.png" width="420"/>
 <img src="plotDir/7/vectorPlot.Guided.DataTransformer.png" width="420"/>
+<img src="plotDir/7/angles.png" width="420"/>
 </p>
 
 <p align="center">
