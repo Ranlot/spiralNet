@@ -33,7 +33,7 @@ def wrap_inputSpacePlotter(sess, positionData, dataHolder, labelData, outputLogi
         gridResults = np.argmax(sess.run(outputLogits, {dataHolder: testingGrid}), 1)
         plt.figure(); plt.scatter(*testingGrid.T, c=bgColor(gridResults), s=10, alpha=0.3)
         plt.scatter(*positionData.T, c=markerColor(np.argmax(labelData, 1)), s=40, edgecolor='black', marker='s')
-        plt.title('Decision boundaries @ input space')
+        plt.title('Decision boundaries @ input space ; %d classes' % numbClasses)
         plt.savefig('%s/inputData.png' % saveDir); plt.close()
     return simplePlotter
 
@@ -50,7 +50,7 @@ def utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHidd
         classProbabilities = sess.run(tf.nn.softmax(outputLogits), {lastHiddenLayer: hiddenGrid})
         plt.scatter(*hiddenGrid.T, c=bgColor(np.argmax(classProbabilities, 1)))
     plt.scatter(*lastHiddenLayer_inputData.T, s=40, edgecolor='black', marker='s', c=markerColor(np.argmax(labelData, 1)))
-    titleDescription = lambda descriptiveString: plt.title(descriptiveString + ' @ last hidden layer ; %s' % epoch)
+    titleDescription = lambda descriptiveString: plt.title(descriptiveString + ' @ last hidden layer ; %s ; %d classes' % (epoch, numbClasses))
     saveDirHelp = lambda descriptivePath: os.path.join(descriptivePath, str(numbClasses))
     if epoch == 'Final':
         titleDescription('Decision boundaries')
@@ -63,21 +63,14 @@ def utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHidd
 def wrap_vectorPlotter(sess, positionData, dataHolder, lastHiddenLayer, outputLogits, numbClasses):
     def simplePlotter():
         saveDir = os.path.join('plotDir', str(numbClasses))
-
         gridForClasses = makeGrid(positionData)
         gridClasses = np.argmax(sess.run(outputLogits, {dataHolder: gridForClasses}), 1)
-
         gridForArrows = makeGrid(positionData, 20)
         lastHiddenLayer_arrows = sess.run(lastHiddenLayer, {dataHolder: gridForArrows})
-
         plt.figure()
         plt.scatter(*gridForClasses.T, c=bgColor(gridClasses), alpha=0.3)
         plt.quiver(gridForArrows[:, 0], gridForArrows[:, 1], lastHiddenLayer_arrows[:, 0], lastHiddenLayer_arrows[:, 1], units='dots', headaxislength=2, headwidth=10, width=8)
-        plt.savefig('%s/vectorPlot.Guided.DataTransformer.png' % saveDir)
-
-        plt.figure()
-        plt.quiver(gridForArrows[:, 0], gridForArrows[:, 1], lastHiddenLayer_arrows[:, 0], lastHiddenLayer_arrows[:, 1], units='dots', headaxislength=2, headwidth=10, width=8)
-        plt.savefig('%s/vectorPlot.Raw.DataTransformer.png' % saveDir)
+        plt.title('Input space (2d) to last hidden layer (2d); vector plot'); plt.savefig('%s/vectorPlot.Guided.DataTransformer.png' % saveDir)
     return simplePlotter
 
 def anglePlotter(angleDB, numbClasses):

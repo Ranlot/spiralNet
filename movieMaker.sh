@@ -7,4 +7,4 @@ function movieMaker {
   convert -loop 0 -delay 10 $(ls $1 | sort -n -t. -k2) $2
 }
 
-movieMaker "framesDir/$numbClasses/decisionBoundaries.*.png" "hidden.anim.$numbClasses.gif"
+movieMaker "framesDir/$numbClasses/decisionBoundaries.*.png" "plotDir/$numbClasses/hidden.anim.$numbClasses.gif"
