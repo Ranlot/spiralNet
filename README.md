@@ -13,7 +13,7 @@ The **trick** is that we architecture our network such that the last hidden laye
 The color of the points shows the class they belong to and the background color shows the class predicted by the trained neural net. 
 
 <p align="center">
-<img src="plotDir/4/inputData.png" width="420"/>
+<img src="plotDir/4/ReLU.inputData.png" width="420"/>
 </p>
 
 ### B) Training and final decision boundaries
@@ -23,8 +23,13 @@ The color of the points shows the class they belong to and the background color 
 (right) Final position of the data in the last hidden layer.  As expected the points are now linearly separable which explains why the final softmax logistic regression gives very good accuracy.  Another interesting observation is that the points are **flowing to the most distant positions from each other as possible**. 
 
 <p align="center">
-<img src="hidden.anim.4.gif" width="420"/>
-<img src="plotDir/4/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/4/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/4/tanh.decisionBoundaries.Final.png" width="420"/>
+</p>
+
+<p align="center">
+<img src="plotDir/4/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/4/ReLU.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 #### What this looks like from input space
@@ -36,8 +41,8 @@ Now that we see where the points are taken to in the hidden layer, it may intere
 (right) Look how arrows point in a very specific direction within each class.  With 4 classes, arrows point to the corners of the unit square.
 
 <p align="center">
-<img src="plotDir/4/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/4/vectorPlot.Guided.DataTransformer.png" width="420"/>
+<img src="plotDir/4/tanh.vector.DataTransformer.png" width="420"/>
+<img src="plotDir/4/tanh.angles.png" width="420"/>
 </p>
 
 ### C) Optimal packing on the edges of the unit square
@@ -45,12 +50,18 @@ Now that we see where the points are taken to in the hidden layer, it may intere
 As mentioned above points in the hidden layer are transformed such that they settle into the most distant positions from each other as possible.  This idea can be immediately checked by conducting the same analysis for a varying number of classes.
 
 <p align="center">
-<img src="plotDir/2/decisionBoundaries.Final.png" width="420"/>
-<img src="plotDir/3/decisionBoundaries.Final.png" width="420"/>
-<img src="plotDir/4/decisionBoundaries.Final.png" width="420"/>
-<img src="plotDir/5/decisionBoundaries.Final.png" width="420"/>
-<img src="plotDir/6/decisionBoundaries.Final.png" width="420"/>
-<img src="plotDir/7/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/2/tanh.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/2/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/3/tanh.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/3/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/4/tanh.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/4/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/5/tanh.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/5/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/6/tanh.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/6/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/7/tanh.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/7/ReLU.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 #### **Take home message**
@@ -68,95 +79,77 @@ The *separation of tangled manifolds* as mentioned in the introduction is carrie
 ##### 2 classes
 
 <p align="center">
-<img src="plotDir/2/inputData.png" width="420"/>
+<img src="plotDir/2/ReLU.inputData.png" width="420"/>
 </p>
 
 <p align="center">
-<img src="plotDir/2/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/2/vectorPlot.Guided.DataTransformer.png" width="420"/>
-</p>
-
-<p align="center">
-<img src="hidden.anim.2.gif" width="420"/>
-<img src="plotDir/2/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/2/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/2/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/2/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/2/tanh.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 ##### 3 classes
 
 <p align="center">
-<img src="plotDir/3/inputData.png" width="420"/>
+<img src="plotDir/3/ReLU.inputData.png" width="420"/>
 </p>
 
 <p align="center">
-<img src="plotDir/3/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/3/vectorPlot.Guided.DataTransformer.png" width="420"/>
-</p>
-
-<p align="center">
-<img src="hidden.anim.3.gif" width="420"/>
-<img src="plotDir/3/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/3/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/3/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/3/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/3/tanh.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 ##### 4 classes
 
 <p align="center">
-<img src="plotDir/4/inputData.png" width="420"/>
+<img src="plotDir/4/ReLU.inputData.png" width="420"/>
 </p>
 
 <p align="center">
-<img src="plotDir/4/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/4/vectorPlot.Guided.DataTransformer.png" width="420"/>
-</p>
-
-<p align="center">
-<img src="hidden.anim.4.gif" width="420"/>
-<img src="plotDir/4/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/4/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/4/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/4/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/4/tanh.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 ##### 5 classes
 
 <p align="center">
-<img src="plotDir/5/inputData.png" width="420"/>
+<img src="plotDir/5/ReLU.inputData.png" width="420"/>
 </p>
 
 <p align="center">
-<img src="plotDir/5/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/5/vectorPlot.Guided.DataTransformer.png" width="420"/>
-</p>
-
-<p align="center">
-<img src="hidden.anim.5.gif" width="420"/>
-<img src="plotDir/5/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/5/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/5/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/5/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/5/tanh.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 ##### 6 classes
 
 <p align="center">
-<img src="plotDir/6/inputData.png" width="420"/>
+<img src="plotDir/6/ReLU.inputData.png" width="420"/>
 </p>
 
 <p align="center">
-<img src="plotDir/6/vectorPlot.Raw.DataTransformer.png" width="420"/>
-<img src="plotDir/6/vectorPlot.Guided.DataTransformer.png" width="420"/>
-</p>
-
-<p align="center">
-<img src="hidden.anim.6.gif" width="420"/>
-<img src="plotDir/6/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/6/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/6/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/6/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/6/tanh.decisionBoundaries.Final.png" width="420"/>
 </p>
 
 ##### 7 classes
 
 <p align="center">
-<img src="plotDir/7/inputData.png" width="420"/>
+<img src="plotDir/7/ReLU.inputData.png" width="420"/>
 </p>
 
 <p align="center">
-<img src="plotDir/7/vectorPlot.Guided.DataTransformer.png" width="420"/>
-<img src="plotDir/7/angles.png" width="420"/>
-</p>
-
-<p align="center">
-<img src="hidden.anim.7.gif" width="420"/>
-<img src="plotDir/7/decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/7/ReLU.hidden.anim.gif" width="420"/>
+<img src="plotDir/7/ReLU.decisionBoundaries.Final.png" width="420"/>
+<img src="plotDir/7/tanh.hidden.anim.gif" width="420"/>
+<img src="plotDir/7/tanh.decisionBoundaries.Final.png" width="420"/>
 </p>
