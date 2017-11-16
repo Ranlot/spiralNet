@@ -14,19 +14,21 @@ from Utils.plottingUtils import *
 parser = argparse.ArgumentParser()
 parser.add_argument('--numbClasses', type=int, required=True, dest='numbClasses', help='number of classes')
 parser.add_argument('--numbEpochs', type=int, required=True, dest='numbEpochs', help='number of epochs')
+parser.add_argument('--activation', type=str, required=True, dest='activation', help='activation function ; only tanh and ReLU are supported')
 args = vars(parser.parse_args())
 
-numbClasses, numEpochs = args['numbClasses'], args['numbEpochs']
+activDir = {'tanh': tf.tanh, 'ReLU': tf.nn.relu}
+numbClasses, numEpochs, activation = args['numbClasses'], args['numbEpochs'], activDir[args['activation']]
 learningRate, L2reg = 0.0005, 0.005
 
 dataHolder = tf.placeholder(tf.float32, [None, 2]) # data is in R2
 labelsHolder = tf.placeholder(tf.float32, [None, numbClasses])
 
-hidden0 = tf.layers.dense(inputs=dataHolder, units=120, activation=tf.tanh, name='hidden0')
-hidden1 = tf.layers.dense(inputs=hidden0, units=80, activation=tf.tanh, name='hidden1')
-hidden11 = tf.layers.dense(inputs=hidden1, units=80, activation=tf.tanh, name='hidden11')
+hidden0 = tf.layers.dense(inputs=dataHolder, units=120, activation=activation, name='hidden0')
+hidden1 = tf.layers.dense(inputs=hidden0, units=80, activation=activation, name='hidden1')
+hidden2 = tf.layers.dense(inputs=hidden1, units=40, activation=activation, name='hidden2')
 
-lastHiddenLayer = tf.layers.dense(inputs=hidden11, units=2, activation=tf.tanh, name='lastHiddenLayer')
+lastHiddenLayer = tf.layers.dense(inputs=hidden2, units=2, activation=activation, name='lastHiddenLayer')
 
 outputLogits = tf.layers.dense(inputs=lastHiddenLayer, units=numbClasses, name='outputLogits')
 
@@ -50,9 +52,9 @@ with tf.Session() as sess:
     positionData, labelData = extractElem(0, spiralData), tf.one_hot(extractElem(1, spiralData), depth=numbClasses).eval()
 
     # simple closures to simplify calls to plotting functions and statitistics builder
-    inputSpace_plotter = wrap_inputSpacePlotter(sess, positionData, dataHolder, labelData, outputLogits, numbClasses)
-    hiddenLayer_plotter = wrap_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses)
-    inputToHidden_vectorPlotter = wrap_vectorPlotter(sess, positionData, dataHolder, lastHiddenLayer, outputLogits, numbClasses)
+    inputSpace_plotter = wrap_inputSpacePlotter(sess, positionData, dataHolder, labelData, outputLogits, numbClasses, args['activation'])
+    hiddenLayer_plotter = wrap_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses, args['activation'])
+    inputToHidden_vectorPlotter = wrap_vectorPlotter(sess, positionData, dataHolder, lastHiddenLayer, outputLogits, numbClasses, args['activation'])
     hiddenStats_builder = wrap_hiddenStatsBuilder(sess, positionData, dataHolder, outputLogits, lastHiddenLayer)
 
     crossEntropyLossValues = []
@@ -64,10 +66,10 @@ with tf.Session() as sess:
         print('%d\t\tcrossEntropy = %f\tL2 = %f\ttotal = %f\taccuracy = %f' % (epoch, _crossEntropyLoss, _L2RegLoss, _lossValue, _accuracy))
     print('\nOptimization Finished!\nPreparing plots...\n')
 
-    lossPlotter(numEpochs, crossEntropyLossValues, numbClasses)
+    lossPlotter(numEpochs, crossEntropyLossValues, numbClasses, args['activation'])
     inputSpace_plotter()
     hiddenLayer_plotter('Final', backgroundClassFill=True)
     inputToHidden_vectorPlotter()
 
     statsDB = hiddenStats_builder() # prepare some statistics about input to last hidden layer function
-    anglePlotter(statsDB, numbClasses)
+    anglePlotter(statsDB, numbClasses, args['activation'])

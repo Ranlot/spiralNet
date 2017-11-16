@@ -1,10 +1,11 @@
 import tensorflow as tf
+from sklearn.preprocessing import normalize
+import pandas as pd
 import scipy.stats as st
-import matplotlib.pyplot as plt
-from .generalUtils import *
 import numpy as np
 import os
-import pandas as pd
+import matplotlib.pyplot as plt
+from .generalUtils import *
 
 markerColor_dict = {0 : 'gold', 1 : 'blue', 2 : 'darkred', 3 : 'green', 4 : 'purple', 5: 'darkorange', 6: 'gray'}
 bgColor_dict = {0 : 'yellow', 1 : 'cyan', 2 : 'tomato', 3 : 'lime', 4 : 'fuchsia', 5: 'orange', 6:'lightgray'}
@@ -19,30 +20,30 @@ def colorGetter(colorDict):
 
 markerColor, bgColor = [colorGetter(colorDict) for colorDict in [markerColor_dict, bgColor_dict]]
 
-def lossPlotter(numEpochs, lossValues, numbClasses):
+def lossPlotter(numEpochs, lossValues, numbClasses, activation):
     f, ax = plt.subplots()
     ax.plot(range(1, 1+numEpochs), lossValues, '-', lw=3, c='k')
-    ax.set_title(r'Cross entropy loss vs. epochs (log %d $\approx$ %.2f)' % (numbClasses, np.log(numbClasses)))
+    ax.set_title(r'Cross entropy loss vs. epochs (log %d $\approx$ %.2f) ; %s' % (numbClasses, np.log(numbClasses), activation))
     ax.grid()
-    plt.savefig(os.path.join('plotDir', str(numbClasses), "loss.png"))
+    plt.savefig(os.path.join('plotDir', str(numbClasses), activation + ".loss.png"))
 
-def wrap_inputSpacePlotter(sess, positionData, dataHolder, labelData, outputLogits, numbClasses):
+def wrap_inputSpacePlotter(sess, positionData, dataHolder, labelData, outputLogits, numbClasses, activation):
     saveDir = os.path.join('plotDir', str(numbClasses))
     def simplePlotter():
         testingGrid = makeGrid(positionData)
         gridResults = np.argmax(sess.run(outputLogits, {dataHolder: testingGrid}), 1)
         plt.figure(); plt.scatter(*testingGrid.T, c=bgColor(gridResults), s=10, alpha=0.3)
         plt.scatter(*positionData.T, c=markerColor(np.argmax(labelData, 1)), s=40, edgecolor='black', marker='s')
-        plt.title('Decision boundaries @ input space ; %d classes' % numbClasses)
-        plt.savefig('%s/inputData.png' % saveDir); plt.close()
+        plt.title('Decision boundaries @ input space ; %d classes ; %s' % (numbClasses, activation))
+        plt.savefig('%s/%s.inputData.png' % (saveDir, activation)); plt.close()
     return simplePlotter
 
-def wrap_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses):
+def wrap_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses, activation):
     def simplePlotter(epoch, backgroundClassFill):
-        return utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses, epoch, backgroundClassFill)
+        return utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses, activation, epoch, backgroundClassFill)
     return simplePlotter
 
-def utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses, epoch, backgroundClassFill):
+def utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHiddenLayer, outputLogits, numbClasses, activation, epoch, backgroundClassFill):
     plt.figure()
     lastHiddenLayer_inputData = sess.run(lastHiddenLayer, {dataHolder: positionData})
     if backgroundClassFill:
@@ -50,7 +51,7 @@ def utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHidd
         classProbabilities = sess.run(tf.nn.softmax(outputLogits), {lastHiddenLayer: hiddenGrid})
         plt.scatter(*hiddenGrid.T, c=bgColor(np.argmax(classProbabilities, 1)))
     plt.scatter(*lastHiddenLayer_inputData.T, s=40, edgecolor='black', marker='s', c=markerColor(np.argmax(labelData, 1)))
-    titleDescription = lambda descriptiveString: plt.title(descriptiveString + ' @ last hidden layer ; %s ; %d classes' % (epoch, numbClasses))
+    titleDescription = lambda descriptiveString: plt.title(descriptiveString + ' @ last hidden layer ; %s ; %d classes ; %s' % (epoch, numbClasses, activation))
     saveDirHelp = lambda descriptivePath: os.path.join(descriptivePath, str(numbClasses))
     if epoch == 'Final':
         titleDescription('Decision boundaries')
@@ -58,22 +59,23 @@ def utils_hiddenLayerPlotter(sess, positionData, dataHolder, labelData, lastHidd
     else:
         titleDescription('Data representation')
         saveDir = saveDirHelp('framesDir')
-    plt.savefig('%s/decisionBoundaries.%s.png' % (saveDir, epoch)); plt.close()
+    plt.savefig('%s/%s.decisionBoundaries.%s.png' % (saveDir, activation, epoch)); plt.close()
 
-def wrap_vectorPlotter(sess, positionData, dataHolder, lastHiddenLayer, outputLogits, numbClasses):
+def wrap_vectorPlotter(sess, positionData, dataHolder, lastHiddenLayer, outputLogits, numbClasses, activation):
     def simplePlotter():
         saveDir = os.path.join('plotDir', str(numbClasses))
         gridForClasses = makeGrid(positionData)
         gridClasses = np.argmax(sess.run(outputLogits, {dataHolder: gridForClasses}), 1)
         gridForArrows = makeGrid(positionData, 20)
-        lastHiddenLayer_arrows = sess.run(lastHiddenLayer, {dataHolder: gridForArrows})
+        # IMPORTANT: note that we normalize so only angles will keep their meaning
+        lastHiddenLayer_arrows = normalize(sess.run(lastHiddenLayer, {dataHolder: gridForArrows}))
         plt.figure()
         plt.scatter(*gridForClasses.T, c=bgColor(gridClasses), alpha=0.3)
         plt.quiver(gridForArrows[:, 0], gridForArrows[:, 1], lastHiddenLayer_arrows[:, 0], lastHiddenLayer_arrows[:, 1], units='dots', headaxislength=2, headwidth=10, width=8)
-        plt.title('Input space (2d) to last hidden layer (2d); vector plot'); plt.savefig('%s/vectorPlot.Guided.DataTransformer.png' % saveDir)
+        plt.title('Input space (2d) to last hidden layer (2d); Angles ; %s' % activation); plt.savefig('%s/%s.vector.DataTransformer.png' % (saveDir, activation))
     return simplePlotter
 
-def anglePlotter(angleDB, numbClasses):
+def anglePlotter(angleDB, numbClasses, activation):
     groupedAngleDB = angleDB.groupby('class')
     classesByIncreasingAngles = groupedAngleDB.apply(lambda group: (np.degrees(st.circmean(group['angle'])))).sort_values().index
     # assert len(set(angleDB['class'])) == numbClasses
@@ -87,7 +89,7 @@ def anglePlotter(angleDB, numbClasses):
         ax.hist(np.degrees(group['angle']), 8, normed=True, histtype='bar', rwidth=0.8, color=classColor, edgecolor='k')
         ax.axvline(meanAngle, ls='--', c='k'); ax.set_yticks([])
         ax.set_title(r'$%.1f \pm %.1f$' % (meanAngle, angleSTD))
-    fig.tight_layout(); plt.savefig(os.path.join('plotDir/', str(numbClasses), 'angles.png'))
+    fig.tight_layout(); plt.savefig(os.path.join('plotDir/', str(numbClasses), activation + '.angles.png'))
 
 def wrap_hiddenStatsBuilder(sess, positionData, dataHolder, outputLogits, lastHiddenLayer):
     def simpleBuilder():
