@@ -1,4 +1,4 @@
-## Taking a peek into the hidden layers
+## Neural nets and optimal packing: taking a peek into the hidden layers...
 
 With deep learning emerging a game-changer in virtually all areas of science, a question that keeps on appearing is: **"How & what do neural networks learn?"**
 
@@ -9,31 +9,13 @@ Let's explore a little further by focusing on a very simple synthetic dataset of
 The **trick** is that we architecture our network such that the last hidden layer has **only 2 neurons**.  Since the input is also in 2D, this means that we can visualize how the data flows from the input space to the last hidden in very straightforward way; it is a simple vector function **from R2 to R2**.
 
 
-(1st column) color of the points shows the class they belong to and the background color shows the class predicted by the trained neural net.
+(*1st column*) The color of the points shows the class they belong to and the background color shows the class predicted by the trained neural net.
 
-(2nd column) Final position of the data in the last hidden layer using tanh activation function. As expected the points are now linearly separable which explains the excellent accuracy demonstrated in the 1st column.
+(*2nd column*) Final position of the data in the last hidden layer using tanh activation function. As expected the points are now **linearly separable** which explains the excellent accuracy demonstrated in the 1st column.
 
-(3rd column) Evolution of dataset as it is bent during training in the last hidden layer using tanh activation function.  The interesting observation is that the points are **flowing to the most distant positions from each other as possible**.  Note that this "optimal packing" is conditional to the specific activation function.  For example, the hyperbolic tangent constrains the data to fit inside the unit square whereas the ReLU opens up a full quadrant. 
+(*3rd column*) Evolution of dataset as it is bent during training in the last hidden layer using tanh activation function.  The interesting observation is that the points are **flowing to the most distant positions from each other as possible**.  Note that this "optimal packing" is conditional to the specific activation function.  For example, the hyperbolic tangent constrains the data to fit inside the **unit square** whereas the ReLU opens up a full **quadrant**. 
 
 (4th & 5th columns) Same as 2nd & 3rd but with ReLU activation
-
-<!---
-#### What this looks like from input space
-
-Now that we see where the points are taken to in the hidden layer, it may interesting to see this from the point of view of the input space. Since both input and the hidden data are in R2, it is possible to simply plot of the vector valued function that transforms the data from the input to its hidden representation.
-
-(left) Without visual guide showing neural net predictions.
-
-(right) Look how arrows point in a very specific direction within each class.  With 4 classes, arrows point to the corners of the unit square.
-
-<p align="center">
-<img src="plotDir/4/tanh.vector.DataTransformer.png" width="420"/>
-<img src="plotDir/4/tanh.angles.png" width="420"/>
-</p>
--->
-
-
-As mentioned above points in the hidden layer are transformed such that they settle into the most distant positions from each other as possible.  This idea can be immediately checked by conducting the same analysis for a varying number of classes.
 
 <p align="center">
 <img src="plotDir/2/ReLU.inputData.png" width="19%"/>
@@ -74,17 +56,14 @@ As mentioned above points in the hidden layer are transformed such that they set
 </p>  
 
 
-#### **Take home message**
+## **Take home message**
 
-The *separation of tangled manifolds* as mentioned in the introduction is carried out by finding a function bends the input data into clusters that optimally pack in the space allowed for by the activation function (unit square for tanh and quadrant for ReLU).
+The *separation of tangled manifolds* reveals itself as a function whose purpose is to bend the input data into clusters that **optimally pack in the space allowed for by the activation function** (unit square for tanh and quadrant for ReLU).
 
-#### **Food for thoughts...**
+**Food for thoughts...**
 
+- Could it be beneficial to design new activation functions that map into the unit sphere instead of a square / quadrant?  This way would ensure complete symmetry no matter what the number of classes is and avoid crowding effects...
 - Is there sweet spot between crowding (as already hinted at here for more than 4 classes in 2D) and sparsity (exponential growth of number of corners with growing dimensionality of the layers)?  In other words, maybe this can be used to help architecture better networks...
 - Depth gives an exponential growth of model expressivity, we could stack many 2-neuron layers together in order to see if how this optimal packing happens in other layers.  Alternatively, one can use dimensionality reduction techniques to do the same...
-- Could it be beneficial to design new activation functions that map into the unit sphere instead of a square / quadrant?  This way would ensure complete symmetry no matter what the number of classes is...
+- Some additional plots relating to the properties of the bending function learned by the neural net are [stored](plotDir) in the repository.  Of particular interest are the vector plots representing the angles of the 2d -> 2d function from input to hidden space (look for *"plotDir/\*/tanh.vector.DataTransformer.png"* and *"plotDir/\*/tanh.angles.png"*).  The clear separation of angle distribution with respect to the class is further indication of the optimal packing idea mentioned above.
 
-<!---
-### All the plots
-You can find below the most important plots for a varying number of classes.  Additional plots such as angle histograms are [stored](plotDir) in the repository.
--->
